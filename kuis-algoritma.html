@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarik Tambang Algoritma — Flowchart & Pseudocode (SMK Kelas X)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪢</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2333; --paper:#fffdf4;
+  --blue:#1f7ae0; --blue-d:#0d57b8;
+  --red:#e8452f; --red-d:#b52a1c;
+  --yellow:#ffc61a; --green:#2e9e44;
+  --step: clamp(11px, 2.7vw, 34px);      /* 10 langkah harus muat layar */
+  --gstep: clamp(7px, 1.7vw, 20px);
+  --pos: 0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Nunito',sans-serif;color:var(--ink);
+  background:linear-gradient(#6ec3f2 0%, #a8ddfa 46%, #d9f2ff 100%);
+  min-height:100vh;overflow-x:hidden;
+}
+
+/* ===== latar hidup: matahari + simbol flowchart melayang ===== */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.sun{position:absolute;top:34px;right:6vw;width:78px;height:78px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #fff6c9, #ffd93b 60%, #ffb300);
+  box-shadow:0 0 46px rgba(255,214,64,.85);animation:sunPulse 4s ease-in-out infinite}
+@keyframes sunPulse{50%{transform:scale(1.07)}}
+.fsym{position:absolute;top:105%;animation:rise linear infinite}
+.sym-term{width:74px;height:30px;border-radius:99px;background:rgba(255,255,255,.42)}
+.sym-proc{width:58px;height:38px;border-radius:6px;background:rgba(255,255,255,.34)}
+.sym-dec{width:46px;height:46px;background:rgba(255,235,160,.55);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.sym-io{width:70px;height:34px;background:rgba(178,224,255,.55);clip-path:polygon(22% 0,100% 0,78% 100%,0 100%)}
+@keyframes rise{from{transform:translateY(0) rotate(0deg)}to{transform:translateY(-135vh) rotate(340deg)}}
+main{position:relative;z-index:1}
+
+/* ===== ticker ===== */
+.ticker{background:var(--ink);color:#ffd23f;font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:2px;overflow:hidden;border-bottom:3px solid #000}
+.tk{display:inline-block;white-space:nowrap;padding:7px 0;animation:tick 28s linear infinite}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ===== layar ===== */
+.screen{display:none;width:min(1180px,96vw);margin:0 auto;padding:clamp(14px,3vw,30px) 0 40px}
+.screen.active{display:block;animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+.kicker{font-family:'Share Tech Mono',monospace;font-size:clamp(11px,1.5vw,14px);letter-spacing:3px;text-align:center;
+  background:var(--ink);color:#ffd23f;display:inline-block;padding:5px 14px;border-radius:6px;transform:rotate(-1.5deg)}
+.title-wrap{text-align:center;margin:18px 0 8px}
+h1.title{font-family:'Bangers',cursive;font-size:clamp(44px,8.2vw,100px);line-height:.95;color:var(--paper);letter-spacing:2px;
+  text-shadow:3px 3px 0 var(--ink),-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink),6px 8px 0 rgba(28,35,51,.35);transform:rotate(-1deg)}
+h1.title .t2{color:var(--yellow);display:block;font-size:.8em;transform:rotate(1deg)}
+.tagline{max-width:660px;margin:12px auto 0;font-weight:700;font-size:clamp(14px,1.8vw,17px);
+  background:rgba(255,255,255,.75);border:3px solid var(--ink);border-radius:12px;padding:10px 16px;box-shadow:0 5px 0 rgba(28,35,51,.5)}
+
+/* ===== kartu VS ===== */
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:clamp(10px,2vw,26px);align-items:stretch;margin:26px 0 16px}
+.team{border:4px solid var(--ink);border-radius:18px;padding:clamp(12px,2vw,22px);text-align:center;color:#fff;
+  box-shadow:0 8px 0 rgba(28,35,51,.8);position:relative;overflow:hidden}
+.team::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.07) 0 14px,transparent 14px 28px);pointer-events:none}
+.t-left{background:linear-gradient(160deg,#2f8bec,#0d57b8);transform:rotate(-1.4deg)}
+.t-right{background:linear-gradient(160deg,#f05a45,#b52a1c);transform:rotate(1.4deg)}
+.team .crew{font-size:clamp(34px,4.6vw,54px);display:flex;justify-content:center;gap:4px}
+.team h3{font-family:'Bangers',cursive;font-size:clamp(24px,3.4vw,40px);letter-spacing:2px;text-shadow:2px 2px 0 rgba(0,0,0,.4)}
+.team p{font-size:clamp(12px,1.5vw,15px);font-weight:800;opacity:.95}
+.vs-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-width:110px}
+.vs-rope{width:100%;height:13px;border-radius:8px;border:2px solid #8a5a26;
+  background:repeating-linear-gradient(115deg,#d29a55 0 7px,#b97f3f 7px 14px)}
+.vs-badge{font-family:'Bangers',cursive;font-size:clamp(30px,4vw,50px);background:var(--yellow);border:4px solid var(--ink);
+  border-radius:50%;width:clamp(64px,8vw,92px);height:clamp(64px,8vw,92px);display:grid;place-items:center;
+  transform:rotate(-6deg);box-shadow:0 6px 0 rgba(28,35,51,.8);animation:vsBob 1.6s ease-in-out infinite alternate}
+@keyframes vsBob{to{transform:rotate(5deg) translateY(-5px)}}
+
+/* ===== strip "cara main" bergaya flowchart ===== */
+.flowstrip{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin:4px 0 14px}
+.node{font-family:'Bangers',cursive;letter-spacing:1px;color:#fff;border:3px solid var(--ink);padding:8px 16px;
+  box-shadow:0 4px 0 rgba(28,35,51,.6);font-size:clamp(13px,1.8vw,17px)}
+.n-term{background:var(--green);border-radius:99px}
+.n-proc{background:var(--blue);border-radius:8px}
+.n-end{background:var(--blue-d);border-radius:99px}
+.dec-wrap{display:flex;flex-direction:column;align-items:center;gap:3px}
+.n-dec{position:relative;width:58px;height:58px;background:var(--ink);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);display:grid;place-items:center}
+.n-dec::before{content:'';position:absolute;inset:4px;background:var(--yellow);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.n-dec b{position:relative;z-index:1;font-family:'Bangers',cursive;font-size:11px;color:var(--ink)}
+.n-branch{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--red-d);background:#ffd9d4;border:2px solid var(--red-d);border-radius:6px;padding:1px 6px}
+.arrow{font-family:'Bangers',cursive;font-size:clamp(18px,2.4vw,26px);color:var(--ink);text-align:center;line-height:.9}
+.arrow small{display:block;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);letter-spacing:1px}
+
+.rules{list-style:none;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:4px 0 22px}
+.rules li{background:var(--paper);border:3px solid var(--ink);border-radius:12px;padding:9px 16px;font-weight:800;
+  font-size:clamp(12px,1.6vw,15px);box-shadow:0 4px 0 rgba(28,35,51,.6);transform:rotate(-.6deg)}
+.rules li:nth-child(2){transform:rotate(.8deg)}
+.rules li:nth-child(3){transform:rotate(-.4deg)}
+
+/* ===== tombol ===== */
+.btn{font-family:'Bangers',cursive;letter-spacing:1.5px;border:4px solid var(--ink);border-radius:14px;cursor:pointer;
+  box-shadow:0 6px 0 rgba(28,35,51,.9);transition:transform .12s,box-shadow .12s;color:var(--ink)}
+.btn:hover{transform:translateY(-3px);box-shadow:0 9px 0 rgba(28,35,51,.9)}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(28,35,51,.9)}
+.btn.big{font-size:clamp(24px,3.4vw,36px);padding:12px 40px;background:var(--yellow)}
+.btn.mid{font-size:clamp(17px,2.2vw,22px);padding:8px 24px;background:var(--yellow)}
+.btn.ghost{font-size:clamp(15px,2vw,19px);padding:8px 22px;background:var(--paper)}
+.cta-row{text-align:center}
+.kbd-hint{display:block;margin-top:12px;font-family:'Share Tech Mono',monospace;font-size:13px;color:#1d4d6e;opacity:.9}
+
+/* ===== HUD ===== */
+.hud{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:stretch;margin-bottom:14px}
+.plate{border:3px solid var(--ink);border-radius:14px;padding:8px 16px;color:#fff;box-shadow:0 5px 0 rgba(28,35,51,.8);flex:1;min-width:150px}
+.plate h4{font-family:'Bangers',cursive;letter-spacing:1.5px;font-size:clamp(17px,2.2vw,24px);text-shadow:2px 2px 0 rgba(0,0,0,.35)}
+.plate .stat{font-family:'Share Tech Mono',monospace;font-size:clamp(11px,1.4vw,14px)}
+.p-blue{background:linear-gradient(160deg,#2f8bec,#0d57b8)}
+.p-red{background:linear-gradient(160deg,#f05a45,#b52a1c);text-align:right}
+.p-mid{background:var(--ink);text-align:center;flex:1.4}
+.p-mid h4{color:var(--yellow)}
+.pips{display:flex;gap:5px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.pip{width:13px;height:13px;border-radius:50%;background:#fff;border:2px solid #000;transition:.3s}
+.pip.ok{background:var(--green)}
+.pip.bad{background:var(--red)}
+.pip.now{background:var(--yellow);animation:pulse .9s infinite alternate}
+@keyframes pulse{to{transform:scale(1.35)}}
+
+/* ===== ARENA ===== */
+.arena{position:relative;height:clamp(215px,32vh,300px);border:4px solid var(--ink);border-radius:20px;overflow:hidden;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0 90px,transparent 90px 180px),linear-gradient(#5fbf50,#4da53f);
+  box-shadow:inset 0 -16px 0 rgba(0,0,0,.14),0 9px 0 rgba(28,35,51,.9)}
+.arena.shake{animation:shake .5s}
+@keyframes shake{15%{transform:translateX(-7px)}35%{transform:translateX(7px)}55%{transform:translateX(-5px)}75%{transform:translateX(4px)}}
+.crowd{position:absolute;top:8px;left:0;right:0;display:flex;justify-content:space-around;font-size:clamp(14px,2vw,21px);filter:grayscale(.35);opacity:.9}
+.crowd span{animation:bob 2.2s ease-in-out infinite alternate}
+.crowd span:nth-child(2n){animation-delay:.4s}.crowd span:nth-child(3n){animation-delay:.8s}.crowd span:nth-child(5n){animation-delay:1.2s}
+@keyframes bob{to{transform:translateY(-5px)}}
+.crowd.cheer span{animation:jump .45s ease-in-out infinite alternate;filter:none}
+@keyframes jump{to{transform:translateY(-12px) scale(1.15)}}
+.crowd.boo span{animation:shiver .3s linear infinite}
+@keyframes shiver{25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
+.center-line{position:absolute;left:50%;top:0;bottom:0;border-left:4px dashed rgba(255,255,255,.7)}
+.ccircle{position:absolute;left:50%;top:52%;width:130px;height:110px;border:4px dashed rgba(255,255,255,.45);border-radius:50%;transform:translate(-50%,-50%)}
+.wline{position:absolute;top:12%;bottom:6%;border-left:5px solid rgba(255,255,255,.9)}
+.wline.l{left:calc(50% - var(--step) * 9)}
+.wline.r{left:calc(50% + var(--step) * 9)}
+.wflag{position:absolute;top:5%;font-family:'Bangers',cursive;font-size:13px;color:#fff;border:2px solid var(--ink);
+  border-radius:6px 6px 6px 0;padding:2px 8px;transform:translateX(-50%);box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.wflag.l{left:calc(50% - var(--step) * 9);background:var(--blue-d)}
+.wflag.r{left:calc(50% + var(--step) * 9);background:var(--red-d)}
+.zlabel{position:absolute;bottom:8px;font-family:'Share Tech Mono',monospace;font-size:clamp(10px,1.3vw,13px);
+  padding:3px 10px;border-radius:6px;color:#fff;border:2px solid var(--ink)}
+.zlabel.l{left:10px;background:rgba(13,87,184,.85)}
+.zlabel.r{right:10px;background:rgba(181,42,28,.85)}
+
+/* kelompok tarik tambang */
+.tug{position:absolute;left:50%;top:54%;display:flex;align-items:center;z-index:3;
+  transform:translate(-50%,-50%) translateX(calc(var(--step) * var(--pos)));
+  transition:transform .85s cubic-bezier(.22,1.5,.36,1)}
+.tug.hard .puller{animation-duration:.32s}
+.side{display:flex;align-items:flex-end}
+.puller{font-size:clamp(32px,4.4vw,54px);line-height:1;filter:drop-shadow(0 6px 0 rgba(0,0,0,.2));margin:0 -3px}
+.pl{transform-origin:50% 100%;animation:heaveL 1s ease-in-out infinite alternate}
+.pr{transform-origin:50% 100%;animation:heaveR 1s ease-in-out infinite alternate}
+.pl.d2{animation-delay:.3s}.pr.d2{animation-delay:.3s}
+@keyframes heaveL{from{transform:rotate(-9deg)}to{transform:rotate(-21deg) translateX(-3px)}}
+@keyframes heaveR{from{transform:rotate(9deg)}to{transform:rotate(21deg) translateX(3px)}}
+.rope{position:relative;width:calc(var(--step) * 7);height:16px;border-radius:9px;border:2px solid #8a5a26;
+  background:repeating-linear-gradient(115deg,#d29a55 0 7px,#b97f3f 7px 14px);
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,.22),0 4px 0 rgba(0,0,0,.18)}
+.knot{position:absolute;left:50%;top:50%;width:30px;height:36px;transform:translate(-50%,-50%);
+  background:var(--red);border:3px solid #7e1d12;border-radius:9px;z-index:2;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.knot::after{content:'';position:absolute;left:50%;top:-16px;transform:translateX(-50%);
+  border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:14px solid var(--yellow)}
+.plumb{position:absolute;left:50%;top:calc(50% + 20px);border-left:3px dashed rgba(255,255,255,.85);height:70px}
+.dust{position:absolute;border-radius:50%;background:rgba(255,244,214,.85);pointer-events:none;animation:dustUp .85s ease-out forwards;z-index:4}
+@keyframes dustUp{to{transform:translateY(-30px) scale(1.9);opacity:0}}
+
+#banner{position:absolute;left:50%;top:12%;transform:translate(-50%,0) rotate(-5deg);z-index:6;opacity:0;pointer-events:none;
+  font-family:'Bangers',cursive;font-size:clamp(19px,3.6vw,42px);letter-spacing:2px;color:#fff;white-space:normal;text-align:center;
+  max-width:92%;background:var(--green);border:4px solid var(--ink);border-radius:14px;padding:5px 22px;box-shadow:0 8px 0 rgba(0,0,0,.3)}
+#banner.bad{background:var(--red)}
+#banner.show{animation:pop 1.6s ease forwards}
+@keyframes pop{
+  0%{opacity:0;transform:translate(-50%,0) rotate(-5deg) scale(.4)}
+  15%{opacity:1;transform:translate(-50%,-8px) rotate(-5deg) scale(1.1)}
+  28%{transform:translate(-50%,-8px) rotate(-5deg) scale(1)}
+  80%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-24px) rotate(-5deg) scale(1)}
+}
+
+/* ===== indikator tali ===== */
+.dock{margin-top:16px}
+.gwrap{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:16px}
+.gwrap .glabel{font-family:'Share Tech Mono',monospace;font-size:clamp(10px,1.4vw,13px);font-weight:700}
+.gtrack{position:relative;width:min(430px,64vw);height:18px;background:#2b3550;border:3px solid var(--ink);border-radius:99px;box-shadow:inset 0 3px 0 rgba(0,0,0,.4)}
+.gtrack::before{content:'';position:absolute;left:50%;top:-3px;bottom:-3px;border-left:2px dashed rgba(255,255,255,.55)}
+.gdot{position:absolute;left:50%;top:50%;width:22px;height:22px;margin-top:-11px;border-radius:50%;
+  background:var(--yellow);border:3px solid var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.35);
+  transform:translateX(calc(var(--gstep) * var(--pos)));transition:transform .85s cubic-bezier(.22,1.5,.36,1)}
+
+/* ===== kartu soal ===== */
+.qcard{background:var(--paper);border:4px solid var(--ink);border-radius:18px;box-shadow:0 9px 0 rgba(28,35,51,.9);
+  padding:clamp(16px,3vw,28px);width:min(880px,100%);margin:0 auto}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.qtag{font-family:'Share Tech Mono',monospace;font-size:clamp(11px,1.5vw,14px);background:var(--ink);color:#ffd23f;padding:4px 12px;border-radius:7px;letter-spacing:1px}
+.timer{display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-weight:700;font-size:clamp(12px,1.6vw,15px)}
+.tbar{width:120px;height:11px;background:#e6e1cf;border:2px solid var(--ink);border-radius:99px;overflow:hidden}
+.tfill{height:100%;width:100%;background:linear-gradient(90deg,#2e9e44,#7ed957);transition:width .1s linear}
+.timer.low .tfill{background:linear-gradient(90deg,#e8452f,#ff8a3d);animation:blinkT .5s infinite alternate}
+.timer.low #tnum{color:var(--red)}
+@keyframes blinkT{to{opacity:.55}}
+.qtext{font-weight:900;font-size:clamp(18px,2.6vw,26px);line-height:1.35;margin-bottom:18px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opts.locked .opt{pointer-events:none}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;background:#fff;border:3px solid var(--ink);border-radius:13px;
+  padding:12px 14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:clamp(14px,1.9vw,17px);cursor:pointer;
+  box-shadow:0 5px 0 rgba(28,35,51,.7);transition:transform .12s,box-shadow .12s,background .2s}
+.opt:hover{transform:translateY(-3px);box-shadow:0 8px 0 rgba(28,35,51,.7);background:#fffbe8}
+.opt .letter{font-family:'Bangers',cursive;flex:0 0 34px;height:34px;border-radius:50%;background:var(--yellow);
+  border:3px solid var(--ink);display:grid;place-items:center;font-size:18px}
+.opt.correct{background:#d9f5d0;border-color:var(--green);animation:winFlash .5s}
+.opt.correct .letter{background:var(--green);color:#fff}
+.opt.wrong{background:#ffd9d4;border-color:var(--red);animation:shake .45s}
+.opt.wrong .letter{background:var(--red);color:#fff}
+.opt.dim{opacity:.5}
+@keyframes winFlash{0%{transform:scale(1.05)}}
+.explain{display:none;margin-top:16px;background:#fff7d6;border:3px dashed #d9a400;border-radius:12px;padding:12px 16px;
+  font-size:clamp(13px,1.8vw,16px);font-weight:700;animation:fadeUp .4s ease}
+.explain.show{display:block}
+.nextrow{text-align:right;margin-top:16px;display:none}
+.nextrow.show{display:block;animation:fadeUp .3s ease}
+
+/* ===== overlay hasil ===== */
+.overlay{position:fixed;inset:0;background:rgba(16,24,40,.6);z-index:50;display:none;place-items:center;padding:20px}
+.overlay.open{display:grid}
+.ocard{background:var(--paper);border:5px solid var(--ink);border-radius:22px;box-shadow:0 12px 0 rgba(0,0,0,.45);
+  width:min(560px,94vw);padding:clamp(22px,4vw,38px);text-align:center;animation:fadeUp .45s cubic-bezier(.22,1.4,.36,1)}
+.ostamp{display:inline-block;font-family:'Bangers',cursive;font-size:clamp(24px,5vw,42px);letter-spacing:2px;color:#fff;
+  border:4px solid var(--ink);border-radius:14px;padding:6px 26px;transform:rotate(-4deg);box-shadow:0 6px 0 rgba(0,0,0,.3);margin-bottom:8px}
+.ostamp.win{background:var(--green)} .ostamp.lose{background:var(--red)}
+.ostamp.perfect{background:linear-gradient(90deg,#f5a300,#ffd93b,#f5a300);color:var(--ink)}
+.obig{font-size:clamp(52px,9vw,84px);margin:8px 0;animation:vsBob 1.4s ease-in-out infinite alternate}
+.ocard h2{font-family:'Bangers',cursive;font-size:clamp(24px,4vw,36px);letter-spacing:1.5px}
+.ocard p{font-weight:700;margin:8px 0 16px}
+.ostats{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px}
+.ochip{font-family:'Share Tech Mono',monospace;font-size:clamp(11px,1.5vw,14px);border:3px solid var(--ink);border-radius:9px;padding:6px 12px;background:#fff;box-shadow:0 3px 0 rgba(28,35,51,.5)}
+.ochip.ok{background:#d9f5d0}.ochip.bad{background:#ffd9d4}
+.obtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.cf{position:absolute;top:-24px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(112vh) rotate(720deg)}}
+
+.credit{text-align:center;font-family:'Share Tech Mono',monospace;font-size:12px;color:#1d4d6e;padding:0 0 26px;opacity:.85}
+
+@media (max-width:760px){
+  .vs{grid-template-columns:1fr}
+  .vs-mid{flex-direction:row;width:100%}
+  .vs-rope{flex:1}
+  .p-red{text-align:left}
+  .opts{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001s !important;transition-duration:.001s !important}
+}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="sun"></div>
+  <div class="fsym" style="left:6%;animation-duration:52s"><div class="sym-term"></div></div>
+  <div class="fsym" style="left:18%;animation-duration:74s;animation-delay:-20s"><div class="sym-dec"></div></div>
+  <div class="fsym" style="left:33%;animation-duration:64s;animation-delay:-40s"><div class="sym-io"></div></div>
+  <div class="fsym" style="left:52%;animation-duration:86s;animation-delay:-12s"><div class="sym-proc"></div></div>
+  <div class="fsym" style="left:68%;animation-duration:58s;animation-delay:-30s"><div class="sym-dec"></div></div>
+  <div class="fsym" style="left:82%;animation-duration:78s;animation-delay:-50s"><div class="sym-term"></div></div>
+  <div class="fsym" style="left:92%;animation-duration:66s;animation-delay:-8s"><div class="sym-io"></div></div>
+</div>
+
+<div class="ticker"><div class="tk" id="tk"></div></div>
+
+<main>
+<!-- ============ LAYAR AWAL ============ -->
+<section id="screen-start" class="screen active">
+  <div class="title-wrap">
+    <span class="kicker">MEDIA PEMBELAJARAN INTERAKTIF • SMK KELAS X • ALGORITMA & PEMROGRAMAN</span>
+    <h1 class="title">TARIK TAMBANG<span class="t2">ALGORITMA! 🪢</span></h1>
+    <p class="tagline">Duel seru materi <b>Flowchart & Pseudocode</b>! Jawab <b>BENAR</b> → tali tertarik ke sisi <b>SISWA</b> 🔵. Jawab <b>SALAH</b> → <b>KOMPUTER</b> 🔴 yang menarik. Jawab semua soal dengan benar untuk menang telak!</p>
+  </div>
+
+  <div class="vs">
+    <div class="team t-left">
+      <div class="crew"><span class="puller pl">🧑‍🎓</span><span class="puller pl d2">👩‍🎓</span></div>
+      <h3>TIM SISWA</h3>
+      <p>Tim Kiri • setiap jawaban benar menambah tarikan ke kiri!</p>
+    </div>
+    <div class="vs-mid">
+      <div class="vs-rope"></div>
+      <div class="vs-badge">VS</div>
+      <div class="vs-rope"></div>
+    </div>
+    <div class="team t-right">
+      <div class="crew"><span class="puller pr">🤖</span><span class="puller pr d2">💻</span></div>
+      <h3>TIM KOMPUTER</h3>
+      <p>Tim Kanan • menarik tali setiap kamu menjawab salah!</p>
+    </div>
+  </div>
+
+  <div class="flowstrip">
+    <div class="node n-term">MULAI</div>
+    <div class="arrow">➜</div>
+    <div class="node n-proc">JAWAB SOAL</div>
+    <div class="arrow">➜</div>
+    <div class="dec-wrap">
+      <div class="n-dec"><b>BENAR?</b></div>
+      <span class="n-branch">❌ TIDAK → komputer menarik</span>
+    </div>
+    <div class="arrow">➜<small>YA</small></div>
+    <div class="node n-end">TARIK KIRI! 🏆</div>
+  </div>
+
+  <ul class="rules">
+    <li>📝 10 soal pilihan ganda: Flowchart & Pseudocode</li>
+    <li>⏱ 20 detik per soal — waktu habis = komputer menarik!</li>
+    <li>🏆 10 jawaban benar = kemenangan sempurna</li>
+  </ul>
+
+  <div class="cta-row">
+    <button class="btn big" id="startBtn">🎽 SIAP, TARIK!</button>
+    <span class="kbd-hint">💡 TIPS: bisa juga tekan tombol 1–4 atau A–D di keyboard</span>
+  </div>
+</section>
+
+<!-- ============ LAYAR PERMAINAN ============ -->
+<section id="screen-game" class="screen">
+  <div class="hud">
+    <div class="plate p-blue">
+      <h4>🧑‍🎓 TIM SISWA</h4>
+      <div class="stat">TARIKAN: <span id="sl">0</span></div>
+    </div>
+    <div class="plate p-mid">
+      <h4>SOAL <span id="qno">1</span>/10</h4>
+      <div class="pips" id="pips"></div>
+    </div>
+    <div class="plate p-red">
+      <h4>TIM KOMPUTER 🤖</h4>
+      <div class="stat">TARIKAN: <span id="kl">0</span></div>
+    </div>
+  </div>
+
+  <div class="arena" id="arena">
+    <div class="crowd" id="crowd"><span>🧑</span><span>👩</span><span>🧔</span><span>👧</span><span>🧕</span><span>👦</span><span>👨‍🦱</span><span>👵</span><span>🧒</span></div>
+    <div class="ccircle"></div>
+    <div class="center-line"></div>
+    <div class="wline l"></div><div class="wline r"></div>
+    <div class="wflag l">MENANG</div><div class="wflag r">MENANG</div>
+    <div class="zlabel l">◀ AREA SISWA</div><div class="zlabel r">AREA KOMPUTER ▶</div>
+
+    <div class="tug" id="tug">
+      <div class="side"><span class="puller pl">🧑‍🎓</span><span class="puller pl d2">👩‍🎓</span></div>
+      <div class="rope"><div class="knot" id="knot"></div><div class="plumb"></div></div>
+      <div class="side"><span class="puller pr">🤖</span><span class="puller pr d2">💻</span></div>
+    </div>
+
+    <div id="banner"></div>
+  </div>
+
+  <div class="dock">
+    <div class="gwrap">
+      <span class="glabel" style="color:#0d57b8">🏆 SISWA</span>
+      <div class="gtrack"><div class="gdot"></div></div>
+      <span class="glabel" style="color:#b52a1c">KOMPUTER 🤖</span>
+    </div>
+
+    <div class="qcard">
+      <div class="qhead">
+        <span class="qtag" id="qtag">SOAL 1 DARI 10</span>
+        <div class="timer" id="timerBox"><span>⏱</span><div class="tbar"><div class="tfill" id="tfill"></div></div><span id="tnum">20s</span></div>
+      </div>
+      <p class="qtext" id="qtext"></p>
+      <div class="opts" id="opts"></div>
+      <div class="explain" id="explain"></div>
+      <div class="nextrow" id="nextrow"><button class="btn mid" id="nextBtn">LANJUT ➜</button></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<p class="credit">🪢 Tarik Tambang Algoritma • Flowchart & Pseudocode • SMK Kelas X</p>
+
+<!-- ============ OVERLAY HASIL ============ -->
+<div class="overlay" id="overlay">
+  <div class="ocard">
+    <div class="ostamp" id="ostamp">SISWA MENANG!</div>
+    <div class="obig" id="oemoji">🏆</div>
+    <h2 id="otitle"></h2>
+    <p id="osub"></p>
+    <div class="ostats">
+      <span class="ochip ok">✅ BENAR: <b id="oc">0</b></span>
+      <span class="ochip bad">❌ SALAH: <b id="ow">0</b></span>
+      <span class="ochip">🪢 TALI: <b id="op">-</b></span>
+    </div>
+    <div class="obtns">
+      <button class="btn mid" id="againBtn">🔁 MAIN LAGI</button>
+      <button class="btn ghost" id="menuBtn">🏠 MENU</button>
+    </div>
+  </div>
+</div>
+<div id="confetti"></div>
+
+<script>
+/* ================= DATA SOAL — FLOWCHART & PSEUDOCODE ================= */
+const QUESTIONS = [
+ {q:"Diagram yang menggunakan simbol-simbol untuk menggambarkan langkah-langkah penyelesaian masalah secara berurutan dan logis disebut...",
+  opts:["Pseudocode","Flowchart","Mind Mapping","Bahasa Pemrograman"], a:1,
+  info:"Flowchart (bagan alir) adalah gambaran visual dari alur sebuah program atau proses, disusun dengan simbol standar dari atas ke bawah."},
+ {q:"Simbol flowchart berbentuk lonjong (seperti kapsul) yang berfungsi menandai awal dan akhir program disebut simbol...",
+  opts:["Proses","Decision","Terminator","Input/Output"], a:2,
+  info:"Terminator adalah simbol pembatas program, biasanya berisi tulisan START/MULAI di awal dan END/SELESAI di akhir."},
+ {q:"Simbol berbentuk persegi panjang dalam flowchart digunakan untuk menyatakan...",
+  opts:["Pemasukan data","Pengambilan keputusan","Awal dan akhir program","Proses / perhitungan"], a:3,
+  info:"Simbol Process (persegi panjang) menyatakan kegiatan pengolahan, misalnya menghitung luas = panjang x lebar."},
+ {q:"Simbol berbentuk belah ketupat (diamond) pada flowchart digunakan untuk...",
+  opts:["Menampilkan hasil","Pengambilan keputusan / percabangan","Menyimpan data","Menghubungkan halaman"], a:1,
+  info:"Simbol Decision memiliki dua atau lebih keluaran, biasanya bertuliskan YA dan TIDAK, sesuai hasil pemeriksaan kondisi."},
+ {q:"Simbol jajargenjang (parallelogram) dalam flowchart digunakan untuk...",
+  opts:["Input dan Output","Perulangan","Keputusan","Penghubung antar halaman"], a:0,
+  info:"Simbol Input/Output dipakai untuk semua kegiatan memasukkan data (misal READ) dan menampilkan hasil (misal PRINT)."},
+ {q:"Tanda panah yang menghubungkan antar simbol pada flowchart dan menunjukkan arah jalannya program disebut...",
+  opts:["Connector","Flow Line (garis alir)","Boundary","Linker"], a:1,
+  info:"Flow line (garis alir) berupa tanda panah yang menunjukkan urutan eksekusi dari satu simbol ke simbol berikutnya."},
+ {q:"Penulisan langkah-langkah algoritma menggunakan bahasa yang mudah dibaca manusia dan sedikit menyerupai kode program disebut...",
+  opts:["Flowchart","Source Code","Pseudocode","Compiler"], a:2,
+  info:"Pseudocode = pseudo (semu) + code. Bukan kode program asli, tetapi membantu merancang logika sebelum mulai coding."},
+ {q:"Kata kunci (keyword) dalam pseudocode yang digunakan untuk memeriksa suatu kondisi adalah...",
+  opts:["IF - THEN - ELSE","READ - PRINT","START - STOP","DISPLAY - SHOW"], a:0,
+  info:"IF - THEN - ELSE adalah struktur percabangan: JIKA kondisi terpenuhi jalankan blok THEN, jika tidak jalankan blok ELSE."},
+ {q:'Perhatikan pseudocode berikut: READ nilai. IF nilai >= 75 THEN PRINT "Lulus" ELSE PRINT "Remedial". Jika nilai = 60, output yang tampil adalah...',
+  opts:['"Lulus"','"Remedial"',"Program error","Tidak ada output"], a:1,
+  info:"Karena 60 tidak memenuhi kondisi nilai >= 75, program mengambil jalur ELSE dan menampilkan \"Remedial\"."},
+ {q:"Struktur dalam pseudocode yang digunakan untuk melakukan perulangan (looping) adalah...",
+  opts:["IF - ELSE","WHILE - DO","INPUT - OUTPUT","TERMINATOR"], a:1,
+  info:"WHILE - DO mengulang sekelompok perintah selama kondisi masih bernilai benar. Contoh lain perulangan: FOR / REPEAT-UNTIL."}
+];
+const LETTERS = ['A','B','C','D'];
+const TOTAL = 10;
+const LIMIT = 20;
+
+/* ================= UTIL & ELEMEN ================= */
+const $ = s => document.querySelector(s);
+let Q=[], idx=0, pos=0, correct=0, wrong=0, answered=false, tId=null, tl=LIMIT, lastTick=null;
+
+$('#tk').textContent = (" ★ TARIK TAMBANG ALGORITMA ★ FLOWCHART & PSEUDOCODE ★ KELAS X SMK ★ INFORMATIKA ★ SISWA VS KOMPUTER ").repeat(4);
+
+(function(){const p=$('#pips');for(let i=0;i<TOTAL;i++){const s=document.createElement('span');s.className='pip';p.appendChild(s);}})();
+
+/* ================= AUDIO ================= */
+let actx=null, muted=false;
+function ac(){ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); return actx; }
+function tone(f,d=.15,type='square',v=.16,delay=0){
+  if(muted) return;
+  try{ const c=ac(),o=c.createOscillator(),g=c.createGain(),t0=c.currentTime+delay;
+    o.type=type;o.frequency.value=f;
+    g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(v,t0+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+    o.connect(g).connect(c.destination);o.start(t0);o.stop(t0+d+.05);
+  }catch(e){}
+}
+const sfx = {
+  click:()=>tone(620,.06,'triangle',.12),
+  correct:()=>{tone(523,.12);tone(659,.12,'square',.16,.11);tone(784,.22,'square',.16,.22);},
+  wrong:()=>{tone(220,.2,'sawtooth',.14);tone(150,.32,'sawtooth',.14,.16);},
+  tug:()=>tone(95,.14,'triangle',.2),
+  tick:()=>tone(950,.05,'triangle',.09),
+  win:()=>{[523,659,784,1046,784,1046].forEach((f,i)=>tone(f,.18,'square',.16,i*.14));},
+  lose:()=>{[420,330,247,165].forEach((f,i)=>tone(f,.24,'sawtooth',.13,i*.18));}
+};
+
+/* ================= NAVIGASI ================= */
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+$('#startBtn').onclick = ()=>{ sfx.click(); initGame(); show('#screen-game'); };
+
+/* ================= LOGIKA GAME ================= */
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function buildQuestions(){
+  Q = QUESTIONS.map(it=>{
+    const pairs = it.opts.map((o,i)=>({o,ok:i===it.a}));
+    shuffle(pairs);
+    return {q:it.q, opts:pairs.map(p=>p.o), a:pairs.findIndex(p=>p.ok), info:it.info};
+  });
+}
+function setPos(p){ document.documentElement.style.setProperty('--pos', p); }
+
+function initGame(){
+  buildQuestions();
+  idx=0; pos=0; correct=0; wrong=0;
+  setPos(0); updateHUD();
+  document.querySelectorAll('.pip').forEach(p=>p.className='pip');
+  $('#overlay').classList.remove('open');
+  $('#confetti').innerHTML='';
+  $('#crowd').className='crowd';
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered=false; lastTick=null;
+  const it=Q[idx];
+  $('#qno').textContent=idx+1;
+  $('#qtag').textContent=`SOAL ${idx+1} DARI ${TOTAL}`;
+  $('#qtext').textContent=`${idx+1}. ${it.q}`;
+  const box=$('#opts'); box.innerHTML=''; box.classList.remove('locked');
+  it.opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';
+    b.innerHTML=`<span class="letter">${LETTERS[i]}</span><span>${o}</span>`;
+    b.onclick=()=>choose(i);
+    box.appendChild(b);
+  });
+  $('#explain').classList.remove('show');
+  $('#nextrow').classList.remove('show');
+  document.querySelectorAll('.pip')[idx].classList.add('now');
+  startTimer();
+}
+
+function startTimer(){
+  stopTimer(); tl=LIMIT; paintTimer();
+  tId=setInterval(()=>{
+    tl-=0.1;
+    if(tl<=0){ stopTimer(); choose(-1); return; }
+    const sec=Math.ceil(tl);
+    if(sec!==lastTick){ lastTick=sec; if(sec<=5) sfx.tick(); }
+    paintTimer();
+  },100);
+}
+function paintTimer(){
+  $('#tfill').style.width=(Math.max(tl,0)/LIMIT*100)+'%';
+  $('#tnum').textContent=Math.max(Math.ceil(tl),0)+'s';
+  $('#timerBox').classList.toggle('low', tl<=5);
+}
+function stopTimer(){ if(tId){clearInterval(tId);tId=null;} }
+
+function choose(i){
+  if(answered) return;
+  answered=true; stopTimer();
+  const it=Q[idx], box=$('#opts'), btns=[...box.children];
+  box.classList.add('locked');
+  btns.forEach((b,bi)=>{
+    if(bi===it.a) b.classList.add('correct');
+    else if(bi===i) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  const ok = (i===it.a);
+  const pip=document.querySelectorAll('.pip')[idx];
+  pip.classList.remove('now'); pip.classList.add(ok?'ok':'bad');
+
+  if(ok){
+    correct++; pos--;
+    banner('BENAR! TALI KE KIRI! ⬅️', false);
+    sfx.correct(); setTimeout(sfx.tug,180);
+    crowdReact('cheer');
+  }else{
+    wrong++; pos++;
+    banner(i===-1 ? 'WAKTU HABIS! KOMPUTER MENARIK! 🤖' : 'SALAH! KOMPUTER MENARIK! ➡️', true);
+    sfx.wrong(); setTimeout(sfx.tug,180);
+    crowdReact('boo');
+    const a=$('#arena'); a.classList.remove('shake'); void a.offsetWidth; a.classList.add('shake');
+  }
+  setPos(pos);
+  const tug=$('#tug'); tug.classList.add('hard'); setTimeout(()=>tug.classList.remove('hard'),900);
+  setTimeout(dustBurst,220);
+  updateHUD();
+
+  const ex=$('#explain');
+  ex.innerHTML=`💡 <b>${ok?'Mantap!':'Info penting:'}</b> ${it.info}`;
+  ex.classList.add('show');
+  const nb=$('#nextBtn');
+  nb.textContent = (idx===TOTAL-1) ? 'LIHAT HASIL 🏁' : 'LANJUT ➜';
+  $('#nextrow').classList.add('show');
+}
+
+function updateHUD(){
+  $('#sl').textContent=correct;
+  $('#kl').textContent=wrong;
+}
+
+$('#nextBtn').onclick = ()=>{
+  sfx.click();
+  idx++;
+  if(idx>=TOTAL) finish(); else renderQuestion();
+};
+
+/* ================= EFEK VISUAL ================= */
+function banner(text,bad){
+  const b=$('#banner');
+  b.textContent=text;
+  b.classList.toggle('bad',bad);
+  b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+}
+function crowdReact(m){
+  const c=$('#crowd'); c.className='crowd '+m;
+  setTimeout(()=>{ if(c.classList.contains(m)) c.className='crowd'; },1400);
+}
+function dustBurst(){
+  const a=$('#arena'),k=$('#knot');
+  if(!a||!k) return;
+  const ar=a.getBoundingClientRect(), kr=k.getBoundingClientRect();
+  const x=kr.left-ar.left+kr.width/2, y=ar.height*.8;
+  for(let i=0;i<7;i++){
+    const d=document.createElement('div');
+    d.className='dust';
+    const s=7+Math.random()*8;
+    d.style.width=d.style.height=s+'px';
+    d.style.left=(x-40+Math.random()*80)+'px';
+    d.style.top=(y-6+Math.random()*14)+'px';
+    a.appendChild(d);
+    d.addEventListener('animationend',()=>d.remove());
+  }
+}
+
+/* ================= AKHIR PERMAINAN ================= */
+function finish(){
+  stopTimer();
+  setTimeout(()=>{
+    const stamp=$('#ostamp');
+    let emoji,title,sub;
+    if(correct===TOTAL){
+      stamp.className='ostamp perfect'; stamp.textContent='🏆 MENANG SEMPURNA!';
+      emoji='🥇'; title='TIM SISWA MENANG TELAK!';
+      sub='10 dari 10 jawaban benar — tali tertarik penuh ke sisi siswa. Kamu menguasai Flowchart & Pseudocode!';
+      sfx.win(); crowdReact('cheer'); confetti(160);
+    }else if(pos<0){
+      stamp.className='ostamp win'; stamp.textContent='TIM SISWA MENANG!';
+      emoji='🎉'; title='SISWA MENGALAHKAN KOMPUTER!';
+      sub=`${correct} jawaban benar sudah cukup untuk menarik tali ke sisimu. Tingkatkan lagi supaya menang sempurna!`;
+      sfx.win(); crowdReact('cheer'); confetti(110);
+    }else{
+      stamp.className='ostamp lose'; stamp.textContent='KOMPUTER MENANG';
+      emoji='🤖'; title='TIM KOMPUTER MENARIK TALI...';
+      sub='Jangan menyerah! Pelajari lagi simbol flowchart dan kata kunci pseudocode, lalu tantang komputer sekali lagi!';
+      sfx.lose(); crowdReact('boo');
+    }
+    $('#oemoji').textContent=emoji;
+    $('#otitle').textContent=title;
+    $('#osub').textContent=sub;
+    $('#oc').textContent=correct;
+    $('#ow').textContent=wrong;
+    $('#op').textContent = Math.abs(pos)+' langkah ke '+(pos<0?'KIRI (siswa)':'KANAN (komputer)');
+    $('#overlay').classList.add('open');
+  },950);
+}
+function confetti(n){
+  const c=$('#confetti'); c.innerHTML='';
+  const colors=['#1f7ae0','#e8452f','#ffc61a','#2e9e44','#ff7ab8','#8e44ad','#ffffff'];
+  for(let i=0;i<n;i++){
+    const p=document.createElement('div');
+    p.className='cf';
+    p.style.left=Math.random()*100+'vw';
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.width=(6+Math.random()*8)+'px';
+    p.style.height=(10+Math.random()*10)+'px';
+    p.style.borderRadius=Math.random()>.5?'50%':'2px';
+    p.style.animationDuration=(2.6+Math.random()*2.6)+'s';
+    p.style.animationDelay=(Math.random()*1.2)+'s';
+    c.appendChild(p);
+  }
+}
+$('#againBtn').onclick=()=>{ sfx.click(); initGame(); };
+$('#menuBtn').onclick=()=>{ sfx.click(); stopTimer(); $('#overlay').classList.remove('open'); $('#confetti').innerHTML=''; show('#screen-start'); };
+
+/* ================= KEYBOARD ================= */
+document.addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if($('#screen-start').classList.contains('active') && (k==='enter'||k===' ')){ e.preventDefault(); $('#startBtn').click(); return; }
+  if($('#overlay').classList.contains('open') && k==='enter'){ $('#againBtn').click(); return; }
+  if(!$('#screen-game').classList.contains('active')) return;
+  if(!answered){
+    let i=-1;
+    if(['1','2','3','4'].includes(k)) i=+k-1;
+    else i=['a','b','c','d'].indexOf(k);
+    if(i>-1 && i<4) choose(i);
+  }else if(k==='enter'){ $('#nextBtn').click(); }
+});
+</script>
+</body>
+</html>
